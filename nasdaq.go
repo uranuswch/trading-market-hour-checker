@@ -5,7 +5,9 @@ import (
 )
 
 // NASDAQ represents the NASDAQ stock exchange
-type NASDAQ struct{}
+type NASDAQ struct{
+	holidayProvider HolidayProvider
+}
 
 var (
 	// NASDAQ timezone (Eastern Time)
@@ -23,7 +25,9 @@ func init() {
 
 // NewNASDAQ creates a new NASDAQ market instance
 func NewNASDAQ() *NASDAQ {
-	return &NASDAQ{}
+	return &NASDAQ{
+		holidayProvider: NewDynamicHolidayProvider(nasdaqLocation),
+	}
 }
 
 // Name returns the market name
@@ -41,6 +45,11 @@ func (n *NASDAQ) IsOpen(t time.Time) bool {
 func (n *NASDAQ) GetStatus(t time.Time) MarketStatus {
 	// Convert to Eastern Time
 	localTime := t.In(nasdaqLocation)
+
+	// Check if it's a holiday first
+	if n.holidayProvider != nil && n.holidayProvider.IsHoliday(localTime) {
+		return StatusClosed
+	}
 
 	// Define trading session times (in Eastern Time)
 	// Overnight: 8:00 PM - 4:00 AM (previous day 20:00 to current day 04:00)

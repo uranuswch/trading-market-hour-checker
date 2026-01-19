@@ -8,7 +8,8 @@ A Go library for checking whether financial markets are open at a given timestam
 - ✅ **HKEX** (Hong Kong Exchange): Morning and afternoon trading sessions
 - ✅ **China A-Share**: SSE (Shanghai Stock Exchange) and SZSE (Shenzhen Stock Exchange)
 - ✅ Automatic timezone conversion for each market
-- ✅ Weekend and holiday awareness
+- ✅ Weekend awareness
+- ✅ Holiday awareness for exchange-specific holidays
 - ✅ Simple and intuitive API
 
 ## Installation
@@ -206,8 +207,12 @@ go run main.go
 ## Notes
 
 - All markets are closed on weekends
-- The library does not currently handle market holidays (e.g., Christmas, New Year)
-- NASDAQ overnight trading requires the next trading day to be a weekday
+- The library includes dynamic holiday calculation and calendars:
+  - **NASDAQ**: US federal holidays are calculated dynamically for any year (New Year's Day, MLK Day, Presidents Day, Good Friday, Memorial Day, Juneteenth, Independence Day, Labor Day, Thanksgiving, Christmas). Observed holidays on weekends are automatically handled.
+  - **HKEX**: Hong Kong market holidays for 2025-2026 (including Lunar New Year, Ching Ming Festival, Easter, Buddha's Birthday, Dragon Boat Festival, National Day, Mid-Autumn Festival, Chung Yeung Festival, Christmas). Lunar calendar holidays require manual specification.
+  - **China A-Share**: Mainland China market holidays for 2025-2026 (including Spring Festival/Chinese New Year, Qingming Festival, Labour Day, Dragon Boat Festival, National Day Golden Week). Lunar calendar holidays require manual specification.
+- **Holiday Limitations**: NASDAQ holidays are calculated dynamically for any year. HKEX and China A-Share holidays (which depend on lunar calendar) are pre-specified for 2025-2026. To extend support beyond 2026, add additional years to the holiday lists in `holiday.go`
+- NASDAQ overnight trading requires the next trading day to be a weekday and not a holiday
 - Timezone data is loaded from the system's timezone database
 
 ## License

@@ -6,7 +6,9 @@ import (
 
 // ChinaAShare represents the China A-Share market (SSE and SZSE)
 // Both Shanghai Stock Exchange and Shenzhen Stock Exchange have the same trading hours
-type ChinaAShare struct{}
+type ChinaAShare struct{
+	holidayProvider HolidayProvider
+}
 
 var (
 	// China A-Share timezone (China Standard Time)
@@ -24,7 +26,9 @@ func init() {
 
 // NewChinaAShare creates a new China A-Share market instance
 func NewChinaAShare() *ChinaAShare {
-	return &ChinaAShare{}
+	return &ChinaAShare{
+		holidayProvider: NewStaticHolidayProvider(chinaAShareHolidays),
+	}
 }
 
 // Name returns the market name
@@ -42,6 +46,11 @@ func (c *ChinaAShare) IsOpen(t time.Time) bool {
 func (c *ChinaAShare) GetStatus(t time.Time) MarketStatus {
 	// Convert to China Standard Time
 	localTime := t.In(chinaLocation)
+
+	// Check if it's a holiday first
+	if c.holidayProvider != nil && c.holidayProvider.IsHoliday(localTime) {
+		return StatusClosed
+	}
 
 	// Check if it's weekend
 	if IsWeekend(localTime) {
