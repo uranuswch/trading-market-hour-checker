@@ -111,3 +111,34 @@ func TestNASDAQ_Name(t *testing.T) {
 		t.Errorf("Expected name 'NASDAQ', got '%s'", nasdaq.Name())
 	}
 }
+
+func TestNASDAQ_HolidayClosed(t *testing.T) {
+	nasdaq := NewNASDAQ()
+
+	// Test Christmas 2025 - should be closed even during regular hours
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
+	christmasTime := time.Date(2025, 12, 25, 10, 0, 0, 0, loc) // Christmas 10:00 AM ET
+
+	if nasdaq.IsOpen(christmasTime) {
+		t.Errorf("NASDAQ should be closed on Christmas at %v", christmasTime)
+	}
+
+	status := nasdaq.GetStatus(christmasTime)
+	if status != StatusClosed {
+		t.Errorf("Expected status %s on Christmas, got %s", StatusClosed, status)
+	}
+
+	// Test Independence Day 2025
+	independenceDay := time.Date(2025, 7, 4, 10, 0, 0, 0, loc)
+	if nasdaq.IsOpen(independenceDay) {
+		t.Errorf("NASDAQ should be closed on Independence Day at %v", independenceDay)
+	}
+
+	status = nasdaq.GetStatus(independenceDay)
+	if status != StatusClosed {
+		t.Errorf("Expected status %s on Independence Day, got %s", StatusClosed, status)
+	}
+}

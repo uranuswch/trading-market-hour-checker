@@ -5,7 +5,9 @@ import (
 )
 
 // HKEX represents the Hong Kong Stock Exchange
-type HKEX struct{}
+type HKEX struct{
+	holidayProvider HolidayProvider
+}
 
 var (
 	// HKEX timezone (Hong Kong Time)
@@ -23,7 +25,9 @@ func init() {
 
 // NewHKEX creates a new HKEX market instance
 func NewHKEX() *HKEX {
-	return &HKEX{}
+	return &HKEX{
+		holidayProvider: NewStaticHolidayProvider(hkexHolidays2025),
+	}
 }
 
 // Name returns the market name
@@ -41,6 +45,11 @@ func (h *HKEX) IsOpen(t time.Time) bool {
 func (h *HKEX) GetStatus(t time.Time) MarketStatus {
 	// Convert to Hong Kong Time
 	localTime := t.In(hkexLocation)
+
+	// Check if it's a holiday first
+	if h.holidayProvider != nil && h.holidayProvider.IsHoliday(localTime) {
+		return StatusClosed
+	}
 
 	// Check if it's weekend
 	if IsWeekend(localTime) {
