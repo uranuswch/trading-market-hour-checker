@@ -111,6 +111,7 @@ func (p *DynamicHolidayProvider) IsHoliday(t time.Time) bool {
 }
 
 // nthWeekdayOfMonth returns the day of month for the nth occurrence of a weekday
+// Returns -1 if the nth occurrence doesn't exist in the month
 func nthWeekdayOfMonth(year int, month time.Month, weekday time.Weekday, n int) int {
 	// Start at the first day of the month
 	t := time.Date(year, month, 1, 0, 0, 0, 0, time.UTC)
@@ -122,6 +123,11 @@ func nthWeekdayOfMonth(year int, month time.Month, weekday time.Weekday, n int) 
 	
 	// Add (n-1) weeks
 	t = t.AddDate(0, 0, (n-1)*7)
+	
+	// Validate we're still in the target month
+	if t.Month() != month {
+		return -1
+	}
 	
 	return t.Day()
 }
@@ -175,7 +181,7 @@ func isGoodFriday(year int, month time.Month, day int) bool {
 	return month == goodFriday.Month() && day == goodFriday.Day()
 }
 
-// calculateEaster calculates Easter Sunday using the Anonymous Gregorian algorithm
+// calculateEaster calculates Easter Sunday using the Gregorian Easter Algorithm (also known as Anonymous Gregorian algorithm)
 func calculateEaster(year int) time.Time {
 	a := year % 19
 	b := year / 100
