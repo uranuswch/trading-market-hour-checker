@@ -9,7 +9,10 @@ func TestChecker_IsOpen(t *testing.T) {
 	checker := NewChecker()
 
 	// Test NASDAQ during regular hours
-	loc, _ := time.LoadLocation("America/New_York")
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
 	nasdaqTime := time.Date(2026, 1, 19, 10, 0, 0, 0, loc) // Monday 10 AM ET
 
 	isOpen, err := checker.IsOpen(MarketNASDAQ, nasdaqTime)
@@ -25,7 +28,10 @@ func TestChecker_GetStatus(t *testing.T) {
 	checker := NewChecker()
 
 	// Test HKEX during morning session
-	loc, _ := time.LoadLocation("Asia/Hong_Kong")
+	loc, err := time.LoadLocation("Asia/Hong_Kong")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
 	hkexTime := time.Date(2026, 1, 19, 10, 0, 0, 0, loc) // Monday 10 AM HKT
 
 	status, err := checker.GetStatus(MarketHKEX, hkexTime)
@@ -86,7 +92,10 @@ func TestChecker_MultipleMarkets(t *testing.T) {
 	checker := NewChecker()
 
 	// Create a time that's weekday in all timezones
-	loc, _ := time.LoadLocation("America/New_York")
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
 	testTime := time.Date(2026, 1, 19, 10, 0, 0, 0, loc) // Monday 10 AM ET
 
 	// Test all markets

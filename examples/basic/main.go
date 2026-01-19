@@ -32,7 +32,11 @@ func main() {
 	fmt.Println("\n=== Example 2: Check Specific Timestamp ===")
 
 	// Create a specific time: Monday, Jan 19, 2026 at 10:00 AM ET
-	loc, _ := time.LoadLocation("America/New_York")
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		fmt.Printf("Error loading timezone: %v\n", err)
+		return
+	}
 	specificTime := time.Date(2026, 1, 19, 10, 0, 0, 0, loc)
 
 	fmt.Printf("Checking markets at: %s\n", specificTime.Format(time.RFC3339))
@@ -93,7 +97,11 @@ func main() {
 		fmt.Printf("Market name: %s\n", nasdaqMarket.Name())
 
 		// Check Hong Kong market
-		hkLoc, _ := time.LoadLocation("Asia/Hong_Kong")
+		hkLoc, err := time.LoadLocation("Asia/Hong_Kong")
+		if err != nil {
+			fmt.Printf("Error loading timezone: %v\n", err)
+			return
+		}
 		hkTime := time.Date(2026, 1, 19, 10, 30, 0, 0, hkLoc)
 
 		hkexMarket, _ := c.GetMarket(checker.MarketHKEX)

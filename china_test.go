@@ -9,7 +9,10 @@ func TestChinaAShare_MorningSession(t *testing.T) {
 	china := NewChinaAShare()
 
 	// Test morning session - Monday 10:00 AM CST
-	loc, _ := time.LoadLocation("Asia/Shanghai")
+	loc, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
 	morningTime := time.Date(2026, 1, 19, 10, 0, 0, 0, loc) // Monday
 
 	if !china.IsOpen(morningTime) {
@@ -26,7 +29,10 @@ func TestChinaAShare_AfternoonSession(t *testing.T) {
 	china := NewChinaAShare()
 
 	// Test afternoon session - Monday 2:00 PM CST
-	loc, _ := time.LoadLocation("Asia/Shanghai")
+	loc, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
 	afternoonTime := time.Date(2026, 1, 19, 14, 0, 0, 0, loc) // Monday
 
 	if !china.IsOpen(afternoonTime) {
@@ -43,7 +49,10 @@ func TestChinaAShare_LunchBreak(t *testing.T) {
 	china := NewChinaAShare()
 
 	// Test lunch break - Monday 12:00 PM CST
-	loc, _ := time.LoadLocation("Asia/Shanghai")
+	loc, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
 	lunchTime := time.Date(2026, 1, 19, 12, 0, 0, 0, loc) // Monday
 
 	if china.IsOpen(lunchTime) {
@@ -60,7 +69,10 @@ func TestChinaAShare_WeekendClosed(t *testing.T) {
 	china := NewChinaAShare()
 
 	// Test weekend - Saturday 10:00 AM CST
-	loc, _ := time.LoadLocation("Asia/Shanghai")
+	loc, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
 	weekendTime := time.Date(2026, 1, 17, 10, 0, 0, 0, loc) // Saturday
 
 	if china.IsOpen(weekendTime) {

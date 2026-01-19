@@ -9,7 +9,10 @@ func TestHKEX_MorningSession(t *testing.T) {
 	hkex := NewHKEX()
 
 	// Test morning session - Monday 10:00 AM HKT
-	loc, _ := time.LoadLocation("Asia/Hong_Kong")
+	loc, err := time.LoadLocation("Asia/Hong_Kong")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
 	morningTime := time.Date(2026, 1, 19, 10, 0, 0, 0, loc) // Monday
 
 	if !hkex.IsOpen(morningTime) {
@@ -26,7 +29,10 @@ func TestHKEX_AfternoonSession(t *testing.T) {
 	hkex := NewHKEX()
 
 	// Test afternoon session - Monday 2:00 PM HKT
-	loc, _ := time.LoadLocation("Asia/Hong_Kong")
+	loc, err := time.LoadLocation("Asia/Hong_Kong")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
 	afternoonTime := time.Date(2026, 1, 19, 14, 0, 0, 0, loc) // Monday
 
 	if !hkex.IsOpen(afternoonTime) {
@@ -43,7 +49,10 @@ func TestHKEX_LunchBreak(t *testing.T) {
 	hkex := NewHKEX()
 
 	// Test lunch break - Monday 12:30 PM HKT
-	loc, _ := time.LoadLocation("Asia/Hong_Kong")
+	loc, err := time.LoadLocation("Asia/Hong_Kong")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
 	lunchTime := time.Date(2026, 1, 19, 12, 30, 0, 0, loc) // Monday
 
 	if hkex.IsOpen(lunchTime) {
@@ -60,7 +69,10 @@ func TestHKEX_WeekendClosed(t *testing.T) {
 	hkex := NewHKEX()
 
 	// Test weekend - Saturday 10:00 AM HKT
-	loc, _ := time.LoadLocation("Asia/Hong_Kong")
+	loc, err := time.LoadLocation("Asia/Hong_Kong")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
 	weekendTime := time.Date(2026, 1, 17, 10, 0, 0, 0, loc) // Saturday
 
 	if hkex.IsOpen(weekendTime) {

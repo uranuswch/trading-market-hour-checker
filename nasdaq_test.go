@@ -9,7 +9,10 @@ func TestNASDAQ_RegularHours(t *testing.T) {
 	nasdaq := NewNASDAQ()
 
 	// Test regular trading hours - Monday 10:00 AM ET
-	loc, _ := time.LoadLocation("America/New_York")
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
 	regularTime := time.Date(2026, 1, 19, 10, 0, 0, 0, loc) // Monday
 
 	if !nasdaq.IsOpen(regularTime) {
@@ -26,7 +29,10 @@ func TestNASDAQ_Premarket(t *testing.T) {
 	nasdaq := NewNASDAQ()
 
 	// Test premarket - Monday 7:00 AM ET
-	loc, _ := time.LoadLocation("America/New_York")
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
 	premarketTime := time.Date(2026, 1, 19, 7, 0, 0, 0, loc) // Monday
 
 	if nasdaq.IsOpen(premarketTime) {
@@ -43,7 +49,10 @@ func TestNASDAQ_Postmarket(t *testing.T) {
 	nasdaq := NewNASDAQ()
 
 	// Test postmarket - Monday 5:00 PM ET
-	loc, _ := time.LoadLocation("America/New_York")
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
 	postmarketTime := time.Date(2026, 1, 19, 17, 0, 0, 0, loc) // Monday
 
 	if nasdaq.IsOpen(postmarketTime) {
@@ -60,7 +69,10 @@ func TestNASDAQ_Overnight(t *testing.T) {
 	nasdaq := NewNASDAQ()
 
 	// Test overnight - Monday 11:00 PM ET (Sunday night to Monday)
-	loc, _ := time.LoadLocation("America/New_York")
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
 	overnightTime := time.Date(2026, 1, 18, 23, 0, 0, 0, loc) // Sunday night
 
 	if nasdaq.IsOpen(overnightTime) {
@@ -77,7 +89,10 @@ func TestNASDAQ_WeekendClosed(t *testing.T) {
 	nasdaq := NewNASDAQ()
 
 	// Test weekend - Saturday 10:00 AM ET
-	loc, _ := time.LoadLocation("America/New_York")
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
 	weekendTime := time.Date(2026, 1, 17, 10, 0, 0, 0, loc) // Saturday
 
 	if nasdaq.IsOpen(weekendTime) {
