@@ -207,12 +207,11 @@ go run main.go
 ## Notes
 
 - All markets are closed on weekends
-- The library includes holiday calendars for 2025 for all supported markets:
-  - **NASDAQ**: US market holidays (New Year's Day, MLK Day, Presidents Day, Good Friday, Memorial Day, Juneteenth, Independence Day, Labor Day, Thanksgiving, Christmas)
-  - **HKEX**: Hong Kong market holidays (including Lunar New Year, Ching Ming Festival, Easter, Buddha's Birthday, Dragon Boat Festival, National Day, Mid-Autumn Festival, Chung Yeung Festival, Christmas)
-  - **China A-Share**: Mainland China market holidays (including Spring Festival/Chinese New Year, Qingming Festival, Labour Day, Dragon Boat Festival, National Day Golden Week)
-- **Holiday Limitations**: The holiday calendars are currently limited to 2025. For years beyond 2025, holiday checking will not be available until the calendars are updated
-- To extend holiday support, update the holiday lists in `holiday.go` with additional years
+- The library includes dynamic holiday calculation and calendars:
+  - **NASDAQ**: US federal holidays are calculated dynamically for any year (New Year's Day, MLK Day, Presidents Day, Good Friday, Memorial Day, Juneteenth, Independence Day, Labor Day, Thanksgiving, Christmas). Observed holidays on weekends are automatically handled.
+  - **HKEX**: Hong Kong market holidays for 2025-2026 (including Lunar New Year, Ching Ming Festival, Easter, Buddha's Birthday, Dragon Boat Festival, National Day, Mid-Autumn Festival, Chung Yeung Festival, Christmas). Lunar calendar holidays require manual specification.
+  - **China A-Share**: Mainland China market holidays for 2025-2026 (including Spring Festival/Chinese New Year, Qingming Festival, Labour Day, Dragon Boat Festival, National Day Golden Week). Lunar calendar holidays require manual specification.
+- **Holiday Limitations**: NASDAQ holidays are calculated dynamically for any year. HKEX and China A-Share holidays (which depend on lunar calendar) are pre-specified for 2025-2026. To extend support beyond 2026, add additional years to the holiday lists in `holiday.go`
 - NASDAQ overnight trading requires the next trading day to be a weekday and not a holiday
 - Timezone data is loaded from the system's timezone database
 

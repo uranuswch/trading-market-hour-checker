@@ -95,12 +95,12 @@ func TestHKEX_Name(t *testing.T) {
 func TestHKEX_HolidayClosed(t *testing.T) {
 	hkex := NewHKEX()
 
-	// Test Lunar New Year 2025 - should be closed even during regular hours
+	// Test Lunar New Year 2026 - should be closed even during regular hours
 	loc, err := time.LoadLocation("Asia/Hong_Kong")
 	if err != nil {
 		t.Fatalf("Failed to load timezone: %v", err)
 	}
-	lunarNewYear := time.Date(2025, 1, 29, 10, 0, 0, 0, loc) // Jan 29, 2025 10:00 AM HKT
+	lunarNewYear := time.Date(2026, 2, 17, 10, 0, 0, 0, loc) // Feb 17, 2026 10:00 AM HKT
 
 	if hkex.IsOpen(lunarNewYear) {
 		t.Errorf("HKEX should be closed on Lunar New Year at %v", lunarNewYear)
@@ -111,8 +111,8 @@ func TestHKEX_HolidayClosed(t *testing.T) {
 		t.Errorf("Expected status %s on Lunar New Year, got %s", StatusClosed, status)
 	}
 
-	// Test Christmas 2025
-	christmas := time.Date(2025, 12, 25, 10, 0, 0, 0, loc)
+	// Test Christmas 2026
+	christmas := time.Date(2026, 12, 25, 10, 0, 0, 0, loc)
 	if hkex.IsOpen(christmas) {
 		t.Errorf("HKEX should be closed on Christmas at %v", christmas)
 	}

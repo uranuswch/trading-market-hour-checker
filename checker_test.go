@@ -13,7 +13,7 @@ func TestChecker_IsOpen(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to load timezone: %v", err)
 	}
-	nasdaqTime := time.Date(2026, 1, 19, 10, 0, 0, 0, loc) // Monday 10 AM ET
+	nasdaqTime := time.Date(2026, 1, 20, 10, 0, 0, 0, loc) // Tuesday 10 AM ET (not a holiday)
 
 	isOpen, err := checker.IsOpen(MarketNASDAQ, nasdaqTime)
 	if err != nil {

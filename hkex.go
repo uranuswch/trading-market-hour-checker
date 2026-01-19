@@ -26,7 +26,7 @@ func init() {
 // NewHKEX creates a new HKEX market instance
 func NewHKEX() *HKEX {
 	return &HKEX{
-		holidayProvider: NewStaticHolidayProvider(hkexHolidays2025),
+		holidayProvider: NewStaticHolidayProvider(hkexHolidays),
 	}
 }
 

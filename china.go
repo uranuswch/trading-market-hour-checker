@@ -27,7 +27,7 @@ func init() {
 // NewChinaAShare creates a new China A-Share market instance
 func NewChinaAShare() *ChinaAShare {
 	return &ChinaAShare{
-		holidayProvider: NewStaticHolidayProvider(chinaAShareHolidays2025),
+		holidayProvider: NewStaticHolidayProvider(chinaAShareHolidays),
 	}
 }
 

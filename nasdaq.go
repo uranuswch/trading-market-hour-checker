@@ -26,7 +26,7 @@ func init() {
 // NewNASDAQ creates a new NASDAQ market instance
 func NewNASDAQ() *NASDAQ {
 	return &NASDAQ{
-		holidayProvider: NewStaticHolidayProvider(nasdaqHolidays2025),
+		holidayProvider: NewDynamicHolidayProvider(nasdaqLocation),
 	}
 }
 
