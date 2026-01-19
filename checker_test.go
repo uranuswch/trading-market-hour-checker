@@ -7,11 +7,11 @@ import (
 
 func TestChecker_IsOpen(t *testing.T) {
 	checker := NewChecker()
-	
+
 	// Test NASDAQ during regular hours
 	loc, _ := time.LoadLocation("America/New_York")
 	nasdaqTime := time.Date(2026, 1, 19, 10, 0, 0, 0, loc) // Monday 10 AM ET
-	
+
 	isOpen, err := checker.IsOpen(MarketNASDAQ, nasdaqTime)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
@@ -23,11 +23,11 @@ func TestChecker_IsOpen(t *testing.T) {
 
 func TestChecker_GetStatus(t *testing.T) {
 	checker := NewChecker()
-	
+
 	// Test HKEX during morning session
 	loc, _ := time.LoadLocation("Asia/Hong_Kong")
 	hkexTime := time.Date(2026, 1, 19, 10, 0, 0, 0, loc) // Monday 10 AM HKT
-	
+
 	status, err := checker.GetStatus(MarketHKEX, hkexTime)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
@@ -39,12 +39,12 @@ func TestChecker_GetStatus(t *testing.T) {
 
 func TestChecker_UnknownMarket(t *testing.T) {
 	checker := NewChecker()
-	
+
 	_, err := checker.IsOpen("UnknownMarket", time.Now())
 	if err == nil {
 		t.Error("Expected error for unknown market type")
 	}
-	
+
 	_, err = checker.GetStatus("UnknownMarket", time.Now())
 	if err == nil {
 		t.Error("Expected error for unknown market type")
@@ -53,7 +53,7 @@ func TestChecker_UnknownMarket(t *testing.T) {
 
 func TestChecker_GetMarket(t *testing.T) {
 	checker := NewChecker()
-	
+
 	market, err := checker.GetMarket(MarketNASDAQ)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
@@ -68,11 +68,11 @@ func TestChecker_GetMarket(t *testing.T) {
 
 func TestChecker_AddMarket(t *testing.T) {
 	checker := NewChecker()
-	
+
 	// Add a custom market
 	customMarket := NewNASDAQ()
 	checker.AddMarket("CustomNASDAQ", customMarket)
-	
+
 	market, err := checker.GetMarket("CustomNASDAQ")
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
@@ -84,14 +84,14 @@ func TestChecker_AddMarket(t *testing.T) {
 
 func TestChecker_MultipleMarkets(t *testing.T) {
 	checker := NewChecker()
-	
+
 	// Create a time that's weekday in all timezones
 	loc, _ := time.LoadLocation("America/New_York")
 	testTime := time.Date(2026, 1, 19, 10, 0, 0, 0, loc) // Monday 10 AM ET
-	
+
 	// Test all markets
 	markets := []MarketType{MarketNASDAQ, MarketHKEX, MarketChinaAShare}
-	
+
 	for _, marketType := range markets {
 		_, err := checker.GetStatus(marketType, testTime)
 		if err != nil {

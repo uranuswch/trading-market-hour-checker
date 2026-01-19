@@ -41,32 +41,32 @@ func (n *NASDAQ) IsOpen(t time.Time) bool {
 func (n *NASDAQ) GetStatus(t time.Time) MarketStatus {
 	// Convert to Eastern Time
 	localTime := t.In(nasdaqLocation)
-	
+
 	// Define trading session times (in Eastern Time)
 	// Overnight: 8:00 PM - 4:00 AM (previous day 20:00 to current day 04:00)
 	overnight := TimeRange{
 		Start: 20 * time.Hour,
 		End:   4 * time.Hour,
 	}
-	
+
 	// Premarket: 4:00 AM - 9:30 AM
 	premarket := TimeRange{
 		Start: 4 * time.Hour,
 		End:   9*time.Hour + 30*time.Minute,
 	}
-	
+
 	// Regular trading: 9:30 AM - 4:00 PM
 	regular := TimeRange{
 		Start: 9*time.Hour + 30*time.Minute,
 		End:   16 * time.Hour,
 	}
-	
+
 	// Postmarket: 4:00 PM - 8:00 PM
 	postmarket := TimeRange{
 		Start: 16 * time.Hour,
 		End:   20 * time.Hour,
 	}
-	
+
 	// Check if it's in overnight session first (before weekend check)
 	// because Sunday 8PM-midnight transitions to Monday's overnight session
 	if overnight.IsWithin(localTime) {
@@ -84,24 +84,24 @@ func (n *NASDAQ) GetStatus(t time.Time) MarketStatus {
 			}
 		}
 	}
-	
+
 	// Check if it's weekend
 	if IsWeekend(localTime) {
 		return StatusClosed
 	}
-	
+
 	// Check each session
 	if regular.IsWithin(localTime) {
 		return StatusOpen
 	}
-	
+
 	if premarket.IsWithin(localTime) {
 		return StatusPremarket
 	}
-	
+
 	if postmarket.IsWithin(localTime) {
 		return StatusPostmarket
 	}
-	
+
 	return StatusClosed
 }

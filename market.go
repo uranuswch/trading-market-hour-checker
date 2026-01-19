@@ -41,7 +41,7 @@ func (tr TimeRange) IsWithin(t time.Time) bool {
 	loc := t.Location()
 	midnight := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, loc)
 	sinceStart := t.Sub(midnight)
-	
+
 	// Handle ranges that cross midnight
 	if tr.End < tr.Start {
 		return sinceStart >= tr.Start || sinceStart < tr.End

@@ -41,29 +41,29 @@ func (h *HKEX) IsOpen(t time.Time) bool {
 func (h *HKEX) GetStatus(t time.Time) MarketStatus {
 	// Convert to Hong Kong Time
 	localTime := t.In(hkexLocation)
-	
+
 	// Check if it's weekend
 	if IsWeekend(localTime) {
 		return StatusClosed
 	}
-	
+
 	// HKEX trading hours (Hong Kong Time):
 	// Morning session: 9:30 AM - 12:00 PM
 	// Afternoon session: 1:00 PM - 4:00 PM
-	
+
 	morningSession := TimeRange{
 		Start: 9*time.Hour + 30*time.Minute,
 		End:   12 * time.Hour,
 	}
-	
+
 	afternoonSession := TimeRange{
 		Start: 13 * time.Hour,
 		End:   16 * time.Hour,
 	}
-	
+
 	if morningSession.IsWithin(localTime) || afternoonSession.IsWithin(localTime) {
 		return StatusOpen
 	}
-	
+
 	return StatusClosed
 }

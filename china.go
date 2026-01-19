@@ -42,29 +42,29 @@ func (c *ChinaAShare) IsOpen(t time.Time) bool {
 func (c *ChinaAShare) GetStatus(t time.Time) MarketStatus {
 	// Convert to China Standard Time
 	localTime := t.In(chinaLocation)
-	
+
 	// Check if it's weekend
 	if IsWeekend(localTime) {
 		return StatusClosed
 	}
-	
+
 	// China A-Share trading hours (CST):
 	// Morning session: 9:30 AM - 11:30 AM
 	// Afternoon session: 1:00 PM - 3:00 PM
-	
+
 	morningSession := TimeRange{
 		Start: 9*time.Hour + 30*time.Minute,
 		End:   11*time.Hour + 30*time.Minute,
 	}
-	
+
 	afternoonSession := TimeRange{
 		Start: 13 * time.Hour,
 		End:   15 * time.Hour,
 	}
-	
+
 	if morningSession.IsWithin(localTime) || afternoonSession.IsWithin(localTime) {
 		return StatusOpen
 	}
-	
+
 	return StatusClosed
 }
