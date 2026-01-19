@@ -104,10 +104,12 @@ var chinaAShareHolidays2025 = []time.Time{
 func mustLoadLocation(name string) *time.Location {
 	loc, err := time.LoadLocation(name)
 	if err != nil {
-		// For testing environments, fallback to UTC with offset
+		// Fallback for environments without timezone data.
+		// Note: These fixed offsets don't account for DST, but since holidays
+		// are compared by date only (not time), this is acceptable for the fallback case.
 		switch name {
 		case "America/New_York":
-			return time.FixedZone("EST", -5*3600)
+			return time.FixedZone("ET", -5*3600) // Approximation without DST
 		case "Asia/Hong_Kong":
 			return time.FixedZone("HKT", 8*3600)
 		case "Asia/Shanghai":
