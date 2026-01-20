@@ -46,11 +46,6 @@ func (n *NASDAQ) GetStatus(t time.Time) MarketStatus {
 	// Convert to Eastern Time
 	localTime := t.In(nasdaqLocation)
 
-	// Check if it's a holiday first
-	if n.holidayProvider != nil && n.holidayProvider.IsHoliday(localTime) {
-		return StatusClosed
-	}
-
 	// Define trading session times (in Eastern Time)
 	// Overnight: 8:00 PM - 4:00 AM (previous day 20:00 to current day 04:00)
 	overnight := TimeRange{
@@ -76,22 +71,27 @@ func (n *NASDAQ) GetStatus(t time.Time) MarketStatus {
 		End:   20 * time.Hour,
 	}
 
-	// Check if it's in overnight session first (before weekend check)
+	// Check if it's in overnight session BEFORE holiday/weekend checks
 	// because Sunday 8PM-midnight transitions to Monday's overnight session
 	if overnight.IsWithin(localTime) {
 		hour := localTime.Hour()
-		if hour >= 20 { // 8 PM or later
-			// Check if next day is a weekday
+		if hour >= 20 { // 8 PM or later (8 PM to midnight)
+			// For 8 PM to midnight, check if NEXT day is a weekday and not a holiday
 			nextDay := localTime.AddDate(0, 0, 1)
-			if !IsWeekend(nextDay) {
+			if !IsWeekend(nextDay) && (n.holidayProvider == nil || !n.holidayProvider.IsHoliday(nextDay)) {
 				return StatusOvernight
 			}
-		} else if hour < 4 { // Before 4 AM
-			// Current day should be a weekday
-			if !IsWeekend(localTime) {
+		} else if hour < 4 { // Before 4 AM (midnight to 4 AM)
+			// For midnight to 4 AM, check if CURRENT day is a weekday and not a holiday
+			if !IsWeekend(localTime) && (n.holidayProvider == nil || !n.holidayProvider.IsHoliday(localTime)) {
 				return StatusOvernight
 			}
 		}
+	}
+
+	// Check if it's a holiday (for regular/premarket/postmarket sessions)
+	if n.holidayProvider != nil && n.holidayProvider.IsHoliday(localTime) {
+		return StatusClosed
 	}
 
 	// Check if it's weekend
