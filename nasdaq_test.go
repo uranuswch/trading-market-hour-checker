@@ -212,8 +212,8 @@ func TestNASDAQ_OvernightHolidayHandling(t *testing.T) {
 		t.Errorf("Expected status %s at Christmas 2:00 AM (current day is holiday), got %s", StatusClosed, status)
 	}
 
-	// Test Case 7: Regular day (Tuesday Jan 20, 2026) at 10:00 AM
-	// Should remain closed on holiday check for regular hours on a holiday during the day
+	// Test Case 7: MLK Day (Monday Jan 19, 2026) at 10:00 AM
+	// Regular hours on a holiday should remain closed
 	mlkDay := time.Date(2026, 1, 19, 10, 0, 0, 0, loc)
 	status = nasdaq.GetStatus(mlkDay)
 	if status != StatusClosed {
