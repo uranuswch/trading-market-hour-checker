@@ -154,3 +154,69 @@ func TestNASDAQ_HolidayClosed(t *testing.T) {
 		t.Errorf("Expected status %s on MLK Day, got %s", StatusClosed, status)
 	}
 }
+
+func TestNASDAQ_OvernightHolidayHandling(t *testing.T) {
+	nasdaq := NewNASDAQ()
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		t.Fatalf("Failed to load timezone: %v", err)
+	}
+
+	// Test Case 1: MLK Day 2026 (Monday Jan 19) at 8:00 PM
+	// The overnight session from 8 PM Jan 19 to midnight should be OPEN
+	// because the next day (Jan 20, Tuesday) is a normal trading day
+	mlkDayEvening := time.Date(2026, 1, 19, 20, 0, 0, 0, loc) // 8:00 PM on holiday
+	status := nasdaq.GetStatus(mlkDayEvening)
+	if status != StatusOvernight {
+		t.Errorf("Expected status %s at MLK Day 8:00 PM (next day is normal), got %s", StatusOvernight, status)
+	}
+
+	// Test Case 2: MLK Day 2026 (Monday Jan 19) at 11:00 PM
+	// Should still be overnight (next day is normal trading day)
+	mlkDayLateNight := time.Date(2026, 1, 19, 23, 0, 0, 0, loc) // 11:00 PM on holiday
+	status = nasdaq.GetStatus(mlkDayLateNight)
+	if status != StatusOvernight {
+		t.Errorf("Expected status %s at MLK Day 11:00 PM (next day is normal), got %s", StatusOvernight, status)
+	}
+
+	// Test Case 3: Tuesday Jan 20, 2026 at 2:00 AM (after MLK Day)
+	// The overnight session from midnight to 4 AM should be OPEN
+	// because the current day (Jan 20, Tuesday) is a normal trading day
+	dayAfterMLKEarlyMorning := time.Date(2026, 1, 20, 2, 0, 0, 0, loc) // 2:00 AM on normal day
+	status = nasdaq.GetStatus(dayAfterMLKEarlyMorning)
+	if status != StatusOvernight {
+		t.Errorf("Expected status %s at 2:00 AM on Jan 20 (normal day), got %s", StatusOvernight, status)
+	}
+
+	// Test Case 4: Friday before MLK weekend at 8:00 PM (Jan 16, 2026)
+	// Next day is Saturday, should be CLOSED
+	fridayBeforeMLKEvening := time.Date(2026, 1, 16, 20, 0, 0, 0, loc) // 8:00 PM Friday
+	status = nasdaq.GetStatus(fridayBeforeMLKEvening)
+	if status != StatusClosed {
+		t.Errorf("Expected status %s at Friday 8:00 PM (next day is weekend), got %s", StatusClosed, status)
+	}
+
+	// Test Case 5: Christmas Eve 2026 (Thursday Dec 24) at 8:00 PM
+	// Next day is Christmas (Friday), should be CLOSED
+	christmasEveEvening := time.Date(2026, 12, 24, 20, 0, 0, 0, loc) // 8:00 PM before holiday
+	status = nasdaq.GetStatus(christmasEveEvening)
+	if status != StatusClosed {
+		t.Errorf("Expected status %s at Christmas Eve 8:00 PM (next day is holiday), got %s", StatusClosed, status)
+	}
+
+	// Test Case 6: Christmas 2026 (Friday Dec 25) at 2:00 AM
+	// Current day is a holiday, should be CLOSED
+	christmasMorning := time.Date(2026, 12, 25, 2, 0, 0, 0, loc) // 2:00 AM on holiday
+	status = nasdaq.GetStatus(christmasMorning)
+	if status != StatusClosed {
+		t.Errorf("Expected status %s at Christmas 2:00 AM (current day is holiday), got %s", StatusClosed, status)
+	}
+
+	// Test Case 7: Regular day (Tuesday Jan 20, 2026) at 10:00 AM
+	// Should remain closed on holiday check for regular hours on a holiday during the day
+	mlkDay := time.Date(2026, 1, 19, 10, 0, 0, 0, loc)
+	status = nasdaq.GetStatus(mlkDay)
+	if status != StatusClosed {
+		t.Errorf("Expected status %s at MLK Day 10:00 AM (holiday), got %s", StatusClosed, status)
+	}
+}
